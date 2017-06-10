@@ -89,7 +89,6 @@ def register():
 @post("/db")
 @route('/db')
 def db():
-    password('a', 'pbkdf2')
     from bottle import request
     if request.method == "GET":
         a = """<!DOCTYPE html>
@@ -111,7 +110,6 @@ def db():
 
 @route('/calc')
 def calc():
-    password('a', 'pbkdf2')
     a = 10000
     b = []
     for i in range(a):
@@ -122,7 +120,6 @@ def calc():
 
 @route('/ping')
 def ping():
-    password('a', 'pbkdf2')
     os.system("ping -c 4 " + request.get_header('X-Forwarded-For'))
     return HTTPResponse(status=200)
 
