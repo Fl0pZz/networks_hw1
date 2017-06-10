@@ -1,4 +1,6 @@
 import hashlib
+import random
+import string
 
 import binascii
 import os
@@ -41,13 +43,14 @@ def login():
         global DB
         username = request.forms.get("username")
         passw = request.forms.get("pass")
-        passo = str(DB.get(username, b'pbkdf2$10000$a$a'))
+        passo = str(DB.get(username, b'sha256$10000$a$a'))
 
         cipher, num_of_iterations, salt, hash = passo.split('$')
         a = password(passw, cipher)
         if passo == a:
             pass
         response = HTTPResponse(status=200)
+        ''.join(random.choice(string.ascii_lowercase) for i in range(50))
         response.set_cookie('sessionid', 'sessionid')
         return response
 
@@ -78,16 +81,15 @@ def register():
         global DB
         username = request.forms.get("username")
         passw = request.forms.get("pass")
-        passo = password(passw, 'pbkdf2')
+        passo = password(passw, 'sha256')
         DB[username] = passo
         return HTTPResponse(status=200)
 
-def a():
-    pass
 
 @post("/db")
 @route('/db')
 def db():
+    password('a', 'pbkdf2')
     from bottle import request
     if request.method == "GET":
         a = """<!DOCTYPE html>
@@ -109,7 +111,8 @@ def db():
 
 @route('/calc')
 def calc():
-    a = 5000
+    password('a', 'pbkdf2')
+    a = 10000
     b = []
     for i in range(a):
         if a % (i + 1) == 0:
@@ -119,11 +122,12 @@ def calc():
 
 @route('/ping')
 def ping():
-    os.system("ping -c 5 " + request.get_header('X-Forwarded-For'))
+    password('a', 'pbkdf2')
+    os.system("ping -c 4 " + request.get_header('X-Forwarded-For'))
     return HTTPResponse(status=200)
 
 
-@route('/file/<filename:path>')
+@route('/bigfile/<filename:path>')
 def file(filename):
     return static_file(filename, root='/vagrant/server/static/files', download=filename)
 
